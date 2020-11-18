@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hues_dovui/src/presentation/base/base_widget.dart';
+import 'package:hues_dovui/src/presentation/home/home_screen.dart';
 import 'package:hues_dovui/src/presentation/more_app/moreapp_viewmodel.dart';
 import 'package:hues_dovui/src/resource/model/app.dart';
 import 'package:hues_dovui/src/resource/repository/other_repository.dart';
+import 'package:hues_dovui/src/routers.dart';
 import 'package:launch_review/launch_review.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +30,7 @@ class MoreAppScreen extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: IconButton(
                     icon: Image.asset('assets/images/btn_back.png'),
-                    iconSize: 50,
+                    iconSize: 40,
                     onPressed: () => Navigator.pop(context),
                   ),
                 )
@@ -77,6 +79,7 @@ class WidgetMoreAppList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
         physics: BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(vertical: 20),
         itemCount: apps.length,
         separatorBuilder: (context, index) {
           return Padding(

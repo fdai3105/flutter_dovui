@@ -12,4 +12,8 @@ class AppEndpoint {
   static const int ERROR_DISCONNECT = -1;
 
   static const String MORE_APPS = '/hsmoreapp';
+  static const int MAX_QUESTION = 862;
+
+  /// ?id = 0
+  static const String QUESTION = '/hsdovuihainao';
 }

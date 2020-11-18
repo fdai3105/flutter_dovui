@@ -1,34 +1,146 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:hues_dovui/src/presentation/base/base_widget.dart';
+import 'package:hues_dovui/src/presentation/play/play.dart';
+import 'package:hues_dovui/src/presentation/widgets/widget_button_answer.dart';
 
 class PlayScreen extends StatelessWidget {
+  static GlobalKey previewContainer = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/bg_play.png"),
-            fit: BoxFit.fill,
-          ),
-        ),
-        child: Column(
-          children: [
-            WidgetPlayHeader(),
-            SizedBox(
-              height: 10,
+      body: RepaintBoundary(
+        key: previewContainer,
+        child: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/bg_play.png"),
+                fit: BoxFit.fill,
+              ),
             ),
-            WidgetPlayQuestion(),
-          ],
+            child: BaseWidget<PlayViewModel>(
+              viewModel: PlayViewModel(),
+              onViewModelReady: (viewModel) async {
+                viewModel.setLoading(true);
+                await viewModel.init();
+                viewModel.setLoading(false);
+              },
+              builder: (context, viewModel, child) {
+                if (!viewModel.isLoading) {
+                  return Column(
+                    children: [
+                      WidgetPlayHeader(
+                        life: viewModel.getLife,
+                        onShare: () {},
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      WidgetQuestion(
+                        level: viewModel.getLevel,
+                        question: viewModel.getQuestion.cauHoi,
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      WidgetAnswers(
+                        question: viewModel.getAnswers,
+                      ),
+                    ],
+                  );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+              child: Container(),
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class WidgetPlayQuestion extends StatelessWidget {
-  const WidgetPlayQuestion({
+class WidgetPlayHeader extends StatelessWidget {
+  final Function onShare;
+  final int life;
+
+  WidgetPlayHeader({
     Key key,
+    @required this.life,
+    this.onShare,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Image.asset(
+          'assets/images/bg_play_header.png',
+          fit: BoxFit.fitWidth,
+        ),
+        Positioned(
+            top: 18,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/ic_heart.png',
+                  fit: BoxFit.fill,
+                  width: 36,
+                ),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  life.toString() ?? "0",
+                  style: TextStyle(color: Colors.white, fontSize: 30),
+                ),
+              ],
+            )),
+        // back button
+        Positioned(
+          top: 0,
+          left: 0,
+          child: IconButton(
+            icon: Image.asset('assets/images/btn_back.png'),
+            iconSize: 40,
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        // share button
+        Positioned(
+          top: 0,
+          right: 0,
+          child: IconButton(
+            icon: Image.asset('assets/images/btn_share.png'),
+            iconSize: 40,
+            onPressed: onShare,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class WidgetQuestion extends StatelessWidget {
+  final int level;
+  final String question;
+
+  WidgetQuestion({
+    Key key,
+    @required this.level,
+    @required this.question,
   }) : super(key: key);
 
   @override
@@ -51,7 +163,7 @@ class WidgetPlayQuestion extends StatelessWidget {
             height: 50,
           ),
           Text(
-            "CẤP ĐỘ 1",
+            "CẤP ĐỘ $level",
             style: TextStyle(
               color: Colors.yellowAccent,
               fontSize: 30,
@@ -66,7 +178,7 @@ class WidgetPlayQuestion extends StatelessWidget {
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: Text(
-                "data data data data data data data data data data data data data data data data data data data data data data data data data data data data data data data data ",
+                question ?? "null",
                 style: TextStyle(
                   color: Colors.yellowAccent,
                   fontSize: 20,
@@ -81,59 +193,31 @@ class WidgetPlayQuestion extends StatelessWidget {
   }
 }
 
-class WidgetPlayHeader extends StatelessWidget {
-  const WidgetPlayHeader({
-    Key key,
-  }) : super(key: key);
+class WidgetAnswers extends StatelessWidget {
+  final List<String> question;
+
+  const WidgetAnswers({this.question});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Wrap(
+      runSpacing: 0,
       children: [
-        Image.asset(
-          'assets/images/bg_play_header.png',
-          fit: BoxFit.fitWidth,
+        WidgetButtonAnswer(
+          type: QuestionType.QuestionA,
+          question: question[0],
         ),
-        Positioned(
-            top: 10,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/ic_heart.png',
-                  fit: BoxFit.fill,
-                  width: 36,
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  '1',
-                  style: TextStyle(color: Colors.white, fontSize: 30),
-                ),
-              ],
-            )),
-        Positioned(
-          top: 0,
-          left: 0,
-          child: IconButton(
-            icon: Image.asset('assets/images/btn_back.png'),
-            iconSize: 50,
-            onPressed: () => Navigator.pop(context),
-          ),
+        WidgetButtonAnswer(
+          type: QuestionType.QuestionB,
+          question: question[1],
         ),
-        Positioned(
-          top: 0,
-          right: 0,
-          child: IconButton(
-            icon: Image.asset('assets/images/btn_share.png'),
-            iconSize: 50,
-            onPressed: () => Navigator.pop(context),
-          ),
+        WidgetButtonAnswer(
+          type: QuestionType.QuestionC,
+          question: question[2],
+        ),
+        WidgetButtonAnswer(
+          type: QuestionType.QuestionD,
+          question: question[3],
         ),
       ],
     );
