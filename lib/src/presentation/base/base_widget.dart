@@ -16,13 +16,10 @@ class BaseWidget<T extends BaseViewModel> extends StatefulWidget {
 }
 
 class _BaseWidgetState<T extends BaseViewModel> extends State<BaseWidget<T>> {
-  T viewModel;
-
   @override
   void initState() {
-    viewModel = widget.viewModel;
     if (widget.onViewModelReady != null) {
-      widget.onViewModelReady(viewModel);
+      widget.onViewModelReady(widget.viewModel);
     }
     super.initState();
   }
@@ -30,7 +27,7 @@ class _BaseWidgetState<T extends BaseViewModel> extends State<BaseWidget<T>> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<T>(
-      create: (context) => viewModel..setContext(context),
+      create: (context) => widget.viewModel..setContext(context),
       child: Consumer<T>(
         builder: widget.builder,
         child: widget.child,

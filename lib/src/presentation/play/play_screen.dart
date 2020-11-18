@@ -4,16 +4,21 @@ import 'package:flutter/rendering.dart';
 import 'package:hues_dovui/src/presentation/base/base_widget.dart';
 import 'package:hues_dovui/src/presentation/play/play.dart';
 import 'package:hues_dovui/src/presentation/widgets/widget_button_answer.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share/share.dart';
+import 'package:share_extend/share_extend.dart';
 
 class PlayScreen extends StatelessWidget {
-  static GlobalKey previewContainer = GlobalKey();
+  final screenshotController = ScreenshotController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: null,
-      body: RepaintBoundary(
-        key: previewContainer,
+      body: Screenshot(
+        controller: screenshotController,
         child: SafeArea(
           child: Container(
             decoration: BoxDecoration(
@@ -35,7 +40,24 @@ class PlayScreen extends StatelessWidget {
                     children: [
                       WidgetPlayHeader(
                         life: viewModel.getLife,
-                        onShare: () {},
+                        onShare: () async {
+                          final directory =
+                              (await getApplicationDocumentsDirectory()).path;
+                          final time = DateTime.now().millisecondsSinceEpoch;
+                          final path =
+                              '$directory/screenshot_dovuihainao_$time.png';
+                          screenshotController
+                              .capture(path: path)
+                              .then((image) async {
+                            await ImageGallerySaver.saveImage(
+                                image.readAsBytesSync());
+                            ShareExtend.share(image.path, 'image');
+                            // await FlutterShare.shareFile(
+                            //     title: 'Help me',
+                            //     filePath:
+                            //         '/data/data/com.phidai.hues_dovui/app_flutter/screenshot_dovuihainao_1605683561889.png');
+                          });
+                        },
                       ),
                       SizedBox(
                         height: 20,

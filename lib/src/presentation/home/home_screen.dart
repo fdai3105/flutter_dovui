@@ -44,11 +44,10 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     WidgetHomeIcons(),
                     SizedBox(
-                      height: 300,
+                      height: 360,
                     ),
-                    WidgetTextLevel(),
-
-                    ///
+                    // TODO:
+                    // WidgetTextLevel(),
                     Column(
                       children: [
                         WidgetHomeButton(

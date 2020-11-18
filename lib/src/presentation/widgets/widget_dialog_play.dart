@@ -120,7 +120,7 @@ class _WidgetDialogFaceState extends State<WidgetDialogFace> {
         .addChild(Sprite.fromImage(images['assets/images/bg_star_yellow.png']));
     final handTween =
         MotionTween<double>((a) => rightHand.scale = a, 1, 0.8, 1);
-    final bgTween = MotionTween<double>((a) => bg.opacity = a, 0, 1, 0.6);
+    final bgTween = MotionTween<double>((a) => bg.opacity = a, 0, 1, 0.8);
     _nodeHand.motions.run(MotionRepeatForever(handTween));
     _nodeBackground.motions.run(MotionRepeatForever(bgTween));
   }

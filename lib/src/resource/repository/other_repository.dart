@@ -13,8 +13,9 @@ class OtherRepository {
       "os": Platform.isAndroid ? "android" : "ios"
     };
     try {
-      Response _response = await DioService().get(
-          AppEndpoint.MORE_APPS, queryParameters: params);
+      final _response = await DioService().get(
+          AppEndpoint.BASE_URL + AppEndpoint.MORE_APPS, queryParameters: params);
+      print(_response.toString());
       List.from(jsonDecode(_response.data)['apps']).forEach((element) {
         _apps.add(App.fromJson(element));
       });

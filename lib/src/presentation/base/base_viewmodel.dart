@@ -1,4 +1,9 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:hues_dovui/src/presentation/widgets/widget_dialog_network.dart';
+import 'package:hues_dovui/src/presentation/widgets/widget_dialog_play.dart';
 import 'package:rxdart/subjects.dart';
 
 class BaseViewModel extends ChangeNotifier {

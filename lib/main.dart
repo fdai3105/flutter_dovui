@@ -4,7 +4,6 @@ import 'package:hues_dovui/src/presentation/home/home_screen.dart';
 import 'package:hues_dovui/src/presentation/home/home_viewmodel.dart';
 import 'package:hues_dovui/src/presentation/more_app/more.dart';
 import 'package:hues_dovui/src/presentation/play/play.dart';
-import 'package:hues_dovui/src/resource/repository/other_repository.dart';
 import 'package:hues_dovui/src/resource/service/SoundService.dart';
 import 'package:hues_dovui/src/routers.dart';
 import 'package:hues_dovui/src/utlis/shared_pref.dart';

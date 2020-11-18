@@ -37,14 +37,18 @@ dependencies:
   dio: ^3.0.10
   connectivity: ^2.0.1
 
-  # image and sound
+  # media
   audioplayers: ^0.16.2
   spritewidget: ^0.9.24
+  screenshot: ^0.2.0
+  image_gallery_saver: ^1.6.5
+  share_extend: ^1.1.9
 
   # utils
   share: ^0.6.5+4
   launch_review: ^2.0.0
   shared_preferences: ^0.5.12+4
+  path_provider: ^1.6.24
 
 dev_dependencies:
   flutter_test:
