@@ -51,9 +51,19 @@ class MoreAppScreen extends StatelessWidget {
                     return Center(
                       child: CircularProgressIndicator(),
                     );
-                  } else {
+                  } else if (!viewModel.isLoading) {
                     return WidgetMoreAppList(
                       apps: viewModel.getApps,
+                    );
+                  } else {
+                    return Center(
+                      child: Text(
+                        'No data',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                        ),
+                      ),
                     );
                   }
                 },

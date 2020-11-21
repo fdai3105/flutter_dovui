@@ -15,7 +15,6 @@ class OtherRepository {
     try {
       final _response = await DioService().get(
           AppEndpoint.BASE_URL + AppEndpoint.MORE_APPS, queryParameters: params);
-      print(_response.toString());
       List.from(jsonDecode(_response.data)['apps']).forEach((element) {
         _apps.add(App.fromJson(element));
       });

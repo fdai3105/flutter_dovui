@@ -122,9 +122,6 @@ class WidgetTextLevel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<PlayViewModel>(context).getTest.listen((event) {
-      print(event.toString());
-    });
     return Padding(
       padding: const EdgeInsets.all(18),
       child: Text(

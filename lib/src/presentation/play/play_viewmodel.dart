@@ -1,14 +1,9 @@
 import 'dart:async';
-
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:hues_dovui/src/config/app_endpoint.dart';
 import 'package:hues_dovui/src/presentation/base/base_viewmodel.dart';
 import 'package:hues_dovui/src/presentation/widgets/widget_dialog_play.dart';
 import 'package:hues_dovui/src/resource/model/question.dart';
-import 'package:hues_dovui/src/resource/model/setting.dart';
 import 'package:hues_dovui/src/resource/repository/question_repository.dart';
 import 'package:hues_dovui/src/resource/service/SoundService.dart';
 import 'package:hues_dovui/src/utlis/shared_pref.dart';
@@ -23,7 +18,6 @@ class PlayViewModel extends BaseViewModel {
   final _level = BehaviorSubject<int>();
   final _question = BehaviorSubject<Question>();
   final _randomAnswers = BehaviorSubject<List<String>>();
-  final _levelTest = BehaviorSubject<int>();
 
   Future<void> init() async {
     setLife(SharedPref.getSetting().life);
@@ -31,7 +25,6 @@ class PlayViewModel extends BaseViewModel {
     _questions = await QuestionRepository().getQuestions(getLevel);
     setQuestion(_cursor);
     setAnswers(getQuestion);
-    _levelTest.add(getLevel);
   }
 
   /// getter & setter
@@ -64,30 +57,27 @@ class PlayViewModel extends BaseViewModel {
   List<String> get getAnswers => _randomAnswers.value;
 
   void setAnswers(Question question) {
-    _randomAnswers
-        .add([question.a, question.b, question.c, question.d]..shuffle());
+    _randomAnswers.add([question.a, question.b, question.c, question.d]);
     notifyListeners();
   }
-
-  void setTest(int test) {
-    _levelTest.add(test);
-    notifyListeners();
-  }
-
-  Stream get getTest => _levelTest.stream;
 
   /// voids
   void answer(String answer) async {
-    if (answer == getQuestion.dapan) {
-      if (_questions.length == getLevel) {
-        if (getLevel == AppEndpoint.MAX_QUESTION) {
-          print('pha dao');
-          _dialogPhaDao();
-          return;
-        }
+    _questions.removeWhere((element) => element.id == getQuestion.id);
+    _cursor++;
+    if (_cursor == _questions.length) {
+      if (getLevel == AppEndpoint.MAX_QUESTION) {
+        print('pha dao');
+        _dialogPhaDao();
+        return;
       } else {
+        print('fetch new question');
+        setLoading(true);
         _questions += await QuestionRepository().getQuestions(getLevel);
+        setLoading(false);
       }
+    }
+    if (answer == getQuestion.dapan) {
       _dialogRight();
       await SoundService().playSound(GameSound.Right);
     } else {
@@ -97,18 +87,18 @@ class PlayViewModel extends BaseViewModel {
         _dialogLose();
       } else {
         await SoundService().playSound(GameSound.Wrong);
-        _questions.removeWhere((element) => element.id == getQuestion.id);
         _dialogWrong();
       }
     }
   }
 
-  void _reset() {
+  void _reset() async {
+    _cursor = 0;
     setLife(5);
     setLevel(1);
     _setting.saveSetting(SharedPref.getSetting().copyWith(life: 5, level: 1));
-    _questions.shuffle();
-    setQuestion(getLevel);
+    _questions = await QuestionRepository().getQuestions(getLevel)..shuffle();
+    setQuestion(_cursor);
     setAnswers(getQuestion);
   }
 
@@ -122,11 +112,9 @@ class PlayViewModel extends BaseViewModel {
           btnText: 'Câu tiếp',
           message: getQuestion.giaiThich ?? "Giỏi thế ^^",
           onTap: () {
-            _cursor++;
             setLevel(getLevel + 1);
-            setQuestion(getLevel);
+            setQuestion(_cursor);
             setAnswers(getQuestion);
-            setTest(getLevel + 1);
           },
         );
       },
@@ -143,7 +131,7 @@ class PlayViewModel extends BaseViewModel {
           message: getQuestion.giaiThich,
           btnText: "Chơi lại",
           onTap: () {
-            setQuestion(getLevel);
+            setQuestion(_cursor);
             setAnswers(getQuestion);
           },
         );
